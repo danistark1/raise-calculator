@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QC Raise Calculator | 2026</title>
+    <style>
+        :root {
+            --primary: #0045A5;
+            --accent: #00D2FF;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 440px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-wrapper {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-container span {
+            position: absolute;
+            left: 12px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 12px 12px 30px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 69, 165, 0.1);
+        }
+
+        .results {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid #f1f5f9;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .main-result {
+            text-align: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px dashed #f1f5f9;
+        }
+
+        .main-result .label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .main-result .value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #10b981; /* Green */
+        }
+
+        .efficiency-bar-bg {
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            margin: 15px 0 5px 0;
+            overflow: hidden;
+        }
+
+        .efficiency-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.5s ease-out;
+        }
+
+        .footer-note {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 1.5rem;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Raise Calculator</h1>
+    <p class="subtitle">Quebec Income Tax Estimates • 2026</p>
+
+    <div class="input-wrapper">
+        <label>Annual Salary (Gross)</label>
+        <div class="input-container">
+            <span>$</span>
+            <input type="number" id="salary" value="75000" oninput="calculate()">
+        </div>
+    </div>
+
+    <div class="input-wrapper">
+        <label>Increase Percentage</label>
+        <div class="input-container">
+            <span>%</span>
+            <input type="number" id="percent" value="4" oninput="calculate()">
+        </div>
+    </div>
+
+    <div class="results">
+        <div class="result-item">
+            <span style="color: var(--text-light)">Total New Gross</span>
+            <span id="newGross" style="font-weight: 700;">$0</span>
+        </div>
+        <div class="result-item">
+            <span style="color: var(--text-light)">Annual Net Increase</span>
+            <span id="annualNet" style="font-weight: 700; color: #10b981;">$0</span>
+        </div>
+
+        <div class="efficiency-bar-bg">
+            <div class="efficiency-bar-fill" id="bar"></div>
+        </div>
+        <div style="display:flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-light);">
+            <span>Retained after taxes</span>
+            <span id="efficiencyText">0%</span>
+        </div>
+
+        <div class="main-result">
+            <span class="label">EXTRA CASH PER MONTH</span>
+            <span class="value" id="netMonthly">$0</span>
+        </div>
+    </div>
+
+    <p class="footer-note">
+        Calculated using 2026 Federal/Provincial brackets, 16.5% Quebec Abatement, QPP, and QPIP estimates. 
+        Actual results may vary based on specific credits.
+    </p>
+</div>
+
+<script>
+function calculateTax(income) {
+    if (income <= 0) return 0;
+
+    // 2026 Federal Brackets (Post-Abatement 16.5% adjustment)
+    const fedBrackets = [
+        { limit: 58523, rate: 0.14 },
+        { limit: 117045, rate: 0.205 },
+        { limit: 181440, rate: 0.26 },
+        { limit: 258482, rate: 0.29 },
+        { limit: Infinity, rate: 0.33 }
+    ];
+
+    // 2026 Quebec Provincial Brackets
+    const qcBrackets = [
+        { limit: 54345, rate: 0.14 },
+        { limit: 108680, rate: 0.19 },
+        { limit: 132245, rate: 0.24 },
+        { limit: Infinity, rate: 0.2575 }
+    ];
+
+    let fedTax = 0;
+    let prevLimit = 0;
+    for (let b of fedBrackets) {
+        if (income > prevLimit) {
+            fedTax += (Math.min(income, b.limit) - prevLimit) * b.rate;
+            prevLimit = b.limit;
+        }
+    }
+    fedTax = fedTax * 0.835; // Apply 16.5% Quebec Abatement
+
+    let qcTax = 0;
+    prevLimit = 0;
+    for (let b of qcBrackets) {
+        if (income > prevLimit) {
+            qcTax += (Math.min(income, b.limit) - prevLimit) * b.rate;
+            prevLimit = b.limit;
+        }
+    }
+
+    // Mandatory Deductions (2026 Estimates)
+    const qpp = Math.min(income * 0.063, 4479); 
+    const qpip = Math.min(income * 0.0043, 442);
+    const ei = Math.min(income * 0.013, 895);
+
+    return fedTax + qcTax + qpp + qpip + ei;
+}
+
+function calculate() {
+    const salary = parseFloat(document.getElementById('salary').value) || 0;
+    const percent = parseFloat(document.getElementById('percent').value) || 0;
+
+    const raiseAmount = salary * (percent / 100);
+    const newSalary = salary + raiseAmount;
+
+    const taxOld = calculateTax(salary);
+    const taxNew = calculateTax(newSalary);
+
+    const netOld = salary - taxOld;
+    const netNew = newSalary - taxNew;
+    
+    const annualExtra = netNew - netOld;
+    const monthlyExtra = annualExtra / 12;
+    const efficiency = raiseAmount > 0 ? (annualExtra / raiseAmount) * 100 : 0;
+
+    const formatter = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' });
+
+    document.getElementById('newGross').innerText = formatter.format(newSalary);
+    document.getElementById('annualNet').innerText = formatter.format(annualExtra);
+    document.getElementById('netMonthly').innerText = formatter.format(monthlyExtra);
+    document.getElementById('bar').style.width = efficiency + '%';
+    document.getElementById('efficiencyText').innerText = efficiency.toFixed(1) + '%';
+}
+
+calculate();
+</script>
+
+</body>
+</html>
